@@ -1,0 +1,1 @@
+{"name":"Local: ex1","url":"/home/debian/Documents/c/lista1/ex1.c","tests":[{"id":1772839731110,"input":"10\n2 3","output":"13\nOpa xupenio AULAS..."}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/debian/Documents/c/lista1/ex1.c","group":"local","local":true}

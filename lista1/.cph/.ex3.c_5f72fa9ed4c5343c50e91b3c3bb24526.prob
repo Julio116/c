@@ -1,0 +1,1 @@
+{"name":"Local: ex3","url":"/home/debian/Documents/c/lista1/ex3.c","tests":[{"id":1773102383216,"input":"100 23 27 50","output":"Cada homem ficou com 23, 27 e 50 reais, respectivamente\nE parece que Rebeka vai ter que voltar andando..."}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/debian/Documents/c/lista1/ex3.c","group":"local","local":true}
