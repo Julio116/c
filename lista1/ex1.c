@@ -64,16 +64,20 @@ int main(void)
     printf("Sorte: %u%% ", calc_sorte);
 
     if (calc_sorte < 30) {
-        puts("Nem jogue moedas pra cima hoje.");
+        printf("Nem jogue moedas pra cima hoje.");
+        printf(" Sem tigrinho nem jogos de azar, por favor!\n");
     } else if ((calc_sorte >= 30) && (calc_sorte <= 50)) {
-        puts("Melhor nao arriscar.");
+        printf("Melhor nao arriscar.");
+        printf(" Sem tigrinho nem jogos de azar, por favor!\n");
     } else if ((calc_sorte > 50) && (calc_sorte < 80)) {
-        puts("Por sua conta em risco.");
+        printf("Por sua conta em risco.");
+        printf(" Sem tigrinho nem jogos de azar, por favor!\n");
     } else if ((calc_sorte >= 80) && (calc_sorte <= 90)) {
         printf("Hoje vale a pena arriscar.");
         printf(" Sem tigrinho nem jogos de azar, por favor!\n");
     } else if (calc_sorte > 90) {
-        puts("Nao tenha medo de virar cartas hoje.");
+        printf("Nao tenha medo de virar cartas hoje.");
+        printf(" Sem tigrinho nem jogos de azar, por favor!\n");
     }
 
 

@@ -10,7 +10,7 @@ int main(void)
     double porcent_dinheiro2 = 0;
     double porcent_dinheiro3 = 0;
 
-    scanf("%d %lf %lf %lf", &dinheiro_total, &porcent_dinheiro1,
+    scanf(" %d %lf %lf %lf", &dinheiro_total, &porcent_dinheiro1,
         &porcent_dinheiro2, &porcent_dinheiro3);
 
 
@@ -22,40 +22,41 @@ int main(void)
     int dinheiro_rebeca = 3;
     int invest_rebeca = 0;
 
-    int sobra_int = (
+    int divisao_funcionou = (
             floor(premio1) == premio1 &&
             floor(premio2) == premio2 &&
             floor(premio3) == premio3
         );
 
-    if (sobra_int == 1)
+    if (divisao_funcionou == 1)
     {
-        printf("Cada homem ficou com %lf, %lf e %lf reais, respectivamente\n"),
-            porcent_dinheiro1, porcent_dinheiro2, porcent_dinheiro3;
+        printf("Cada homem ficou com %.0lf, %.0lf e %.0lf reais, respectivamente\n",
+            premio1, premio2, premio3);
 
-        int sobra_rebeca = dinheiro_total - premio1 - premio2 - premio3;
-        dinheiro_rebeca += sobra_rebeca;
-    } else if (sobra_int == 0)
+        dinheiro_rebeca += dinheiro_total - premio1 - premio2 - premio3;
+    } else if (divisao_funcionou == 0)
     {
         dinheiro_rebeca -= 1;
         invest_rebeca += 1;
         dinheiro_total += 1;
 
-        double premio1 = dinheiro_total * porcent_dinheiro1;
-        double premio2 = dinheiro_total * porcent_dinheiro2;
-        double premio3 = dinheiro_total * porcent_dinheiro3;
+        double premio1 = dinheiro_total * (porcent_dinheiro1 / 100);
+        double premio2 = dinheiro_total * (porcent_dinheiro2 / 100);
+        double premio3 = dinheiro_total * (porcent_dinheiro3 / 100);
 
-        int sobra_int = (floor(premio1) == premio1) && (floor(premio2) == premio2)
-            && (floor(premio3 == premio3));
+        int divisao_funcionou = (
+            floor(premio1) == premio1 &&
+            floor(premio2) == premio2 &&
+            floor(premio3) == premio3
+        );
         
-        if (sobra_int == 1)
+        if (divisao_funcionou == 1)
         {
-            printf("Cada homem ficou com %lf, %lf e %lf reais, respectivamente\n",
-                porcent_dinheiro1, porcent_dinheiro2, porcent_dinheiro3);
+            printf("Cada homem ficou com %.0lf, %.0lf e %.0lf reais, respectivamente\n",
+                premio1, premio2, premio3);
 
-            int sobra_rebeca = dinheiro_total - premio1 - premio2 - premio3;
-            dinheiro_rebeca += sobra_rebeca;
-        } else if (sobra_int == 0)
+            dinheiro_rebeca += dinheiro_total - premio1 - premio2 - premio3;
+        } else
         {
             dinheiro_rebeca -= 1;
             invest_rebeca += 1;
@@ -66,7 +67,7 @@ int main(void)
             char letra2 = 0;
             char letra3 = 0;
 
-            scanf("%c %c %c", &letra1, &letra2, &letra3);
+            scanf(" %c %c %c", &letra1, &letra2, &letra3);
 
             int soma = 0;
             int valor1 = letra1 - 96;
@@ -78,21 +79,26 @@ int main(void)
             printf("%d\n", soma);
 
 
-            double premio1 = dinheiro_total * porcent_dinheiro1;
-            double premio2 = dinheiro_total * porcent_dinheiro2;
-            double premio3 = dinheiro_total * porcent_dinheiro3;
+            double premio1 = dinheiro_total * (porcent_dinheiro1 / 100);
+            double premio2 = dinheiro_total * (porcent_dinheiro2 / 100);
+            double premio3 = dinheiro_total * (porcent_dinheiro3 / 100);
 
-            int sobra_int = (floor(premio1) == premio1) && (floor(premio2) == premio2)
-                && (floor(premio3 == premio3));
+            int divisao_funcionou = (
+                floor(premio1) == premio1 &&
+                floor(premio2) == premio2 &&
+                floor(premio3) == premio3
+            );
+
+            int sobra_int = dinheiro_total
+                - premio1 - premio2 - premio3;
             
-            if ((sobra_int == 1) && (sobra_int >= invest_rebeca + 1))
+            if ((divisao_funcionou == 1) && (sobra_int >= invest_rebeca + 1))
             {
-                printf("Cada homem ficou com %lf, %lf e %lf reais, respectivamente\n"),
-                    porcent_dinheiro1, porcent_dinheiro2, porcent_dinheiro3;
+                printf("Cada homem ficou com %.0lf, %.0lf e %.0lf reais, respectivamente\n",
+                    premio1, premio2, premio3);
 
-                int sobra_rebeca = dinheiro_total - premio1 - premio2 - premio3;
-                dinheiro_rebeca += sobra_rebeca;
-            } else if (sobra_int == 0)
+                dinheiro_rebeca += sobra_int;
+            } else
             {
                 dinheiro_rebeca -= 1;
                 invest_rebeca += 1;
@@ -103,7 +109,7 @@ int main(void)
                 int idade2 = 0;
                 int idade3 = 0;
 
-                scanf("%d %d %d", &idade1, &idade2, &idade3);
+                scanf(" %d %d %d", &idade1, &idade2, &idade3);
 
                 int soma_parcelas_3 = 0;
 
@@ -117,21 +123,26 @@ int main(void)
                 printf("%d\n", soma_parcelas_3);
 
 
-                double premio1 = dinheiro_total * porcent_dinheiro1;
-                double premio2 = dinheiro_total * porcent_dinheiro2;
-                double premio3 = dinheiro_total * porcent_dinheiro3;
+                double premio1 = dinheiro_total * (porcent_dinheiro1 / 100);
+                double premio2 = dinheiro_total * (porcent_dinheiro2 / 100);
+                double premio3 = dinheiro_total * (porcent_dinheiro3 / 100);
 
-                int sobra_int = (floor(premio1) == premio1) && (floor(premio2) == premio2)
-                    && (floor(premio3 == premio3));
+                int divisao_funcionou = (
+                    floor(premio1) == premio1 &&
+                    floor(premio2) == premio2 &&
+                    floor(premio3) == premio3
+                );
+
+                int sobra_int = dinheiro_total
+                    - premio1 - premio2 - premio3;
                 
-                if ((sobra_int == 1) && (sobra_int >= invest_rebeca + 1))
+                if ((divisao_funcionou == 1) && (sobra_int >= invest_rebeca + 1))
                 {
-                    printf("Cada homem ficou com %lf, %lf e %lf reais, respectivamente\n"),
-                        porcent_dinheiro1, porcent_dinheiro2, porcent_dinheiro3;
+                    printf("Cada homem ficou com %.0lf, %.0lf e %.0lf reais, respectivamente\n",
+                        premio1, premio2, premio3);
 
-                    int sobra_rebeca = dinheiro_total - premio1 - premio2 - premio3;
-                    dinheiro_rebeca += sobra_rebeca;
-                } else if (sobra_int == 0)
+                    dinheiro_rebeca += sobra_int;
+                } else
                 {
                     printf("Nao foi dessa vez que Rebeka pode ajudar...\n");
                 }
