@@ -1,0 +1,1 @@
+{"name":"Local: ex1","url":"/home/debian/Documents/c/lista2/ex1.c","tests":[{"id":1773256843162,"input":"J","output":"...A...\n..ABA..\n.ABCBA.\nABCDCBA"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/debian/Documents/c/lista2/ex1.c","group":"local","local":true}
