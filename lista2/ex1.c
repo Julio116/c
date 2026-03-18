@@ -21,21 +21,25 @@ int main(void)
             quant_pontos_print -= 2;
         }
 
+        // pontos do lado esquerdo
         for (int j = 0; j < (quant_pontos_print / 2); j++)
         {
             printf(".");
         }
 
+        // lado esquerdo das letras
         for (int j = 0; j <= i; j++)
         {
             printf("%c", 'A' + j);
         }
 
+        // lado direito das letras
         for (int j = i - 1; j + 'A' >= 'A'; j--)
         {
             printf("%c", 'A' + j);
         }
 
+        // pontos do lado direito
         for (int j = 0; j < (quant_pontos_print / 2); j++)
         {
             printf(".");

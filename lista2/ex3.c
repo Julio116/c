@@ -22,7 +22,6 @@ int main(void)
     {
         long salvar_fatores = 1;
         long num_fatores = 0;
-
         
         long is_fator_repetido = 0;
 
@@ -30,7 +29,6 @@ int main(void)
         {
             // verificar se o fator nao eh repetido
             long fator_repetido = salvar_fatores % j;
-
 
             if (fator_repetido == 0)
             {
@@ -59,14 +57,15 @@ int main(void)
             if (primeiro_procurado == 0)
             {
                 primeiro_procurado = salvar_fatores;
+            } else
+            {
+                Q += 1;
             }
-            
-            Q += 1;
         }
     }
 
 
-    if (Q != 0)
+    if (primeiro_procurado > 0)
     {
         printf("%ld %ld", primeiro_procurado, Q);
     } else

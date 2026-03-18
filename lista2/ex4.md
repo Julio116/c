@@ -1,0 +1,1 @@
+Nao utilizei IA

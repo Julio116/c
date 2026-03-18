@@ -11,7 +11,7 @@ int main(void)
 
 
     int melhor_distancia = 0;
-    int melhor_canal = 0;
+    int melhor_canal = -1;
     int melhor_minuto = 0;
     int is_vip = 0;
 
@@ -35,12 +35,18 @@ int main(void)
         // nos termos iniciais
         if (menor_distancia_i1 < menor_distancia_i2)
         {
-            melhor_distancia = menor_distancia_i1;
+            menor_distancia = menor_distancia_i1;
         } else if (menor_distancia_i1 >= menor_distancia_i2)
         {
-            melhor_distancia = menor_distancia_i2;
+            menor_distancia = menor_distancia_i2;
         }
-        menor_distancia = melhor_distancia;
+
+        // se for o primeiro canal, criar a primeira
+        // melhor distancia como base
+        if (melhor_canal == -1)
+        {
+            melhor_distancia = menor_distancia;
+        }
 
 
         int continuar_busca = 1;
@@ -100,6 +106,7 @@ int main(void)
             }
         }
     }
+
 
     if (is_vip == 1)
     {
