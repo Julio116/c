@@ -5,77 +5,113 @@
 int main(void)
 {
     int numero_site = 0;
-    int N = 0;
+    int quant_canais = 0;
 
-    scanf("%d %d", &numero_site, &N);
+    scanf("%d %d", &numero_site, &quant_canais);
 
 
-    int canal_mais_chance = 0;
-    int minuto_mais_proximo = 0;
-    int pode_vip = 0;
+    int melhor_distancia = 0;
+    int melhor_canal = 0;
+    int melhor_minuto = 0;
+    int is_vip = 0;
 
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < quant_canais; i++)
     {
-        int termo1 = 0;
-        int termo2 = 0;
-
-        scanf("%d %d", &termo1, &termo2);
+        // sempre resetar vip
+        is_vip = 0;
 
 
-        int distancia_atual = abs(numero_site - termo1);
+        int termo_inicial_1 = 0;
+        int termo_inicial_2 = 0;
 
-        // calculando as distancias iniciais do termo recebido
-        if ( abs(numero_site - termo2) < distancia_atual)
+        scanf("%d %d", &termo_inicial_1, &termo_inicial_2);
+
+
+        int menor_distancia_i1 = abs(numero_site - termo_inicial_1);
+        int menor_distancia_i2 = abs(numero_site - termo_inicial_2);
+        int menor_distancia = 0;
+
+        // calculando menor distancia
+        // nos termos iniciais
+        if (menor_distancia_i1 < menor_distancia_i2)
         {
-            distancia_atual = abs(numero_site - termo2);
+            melhor_distancia = menor_distancia_i1;
+        } else if (menor_distancia_i1 >= menor_distancia_i2)
+        {
+            melhor_distancia = menor_distancia_i2;
         }
+        menor_distancia = melhor_distancia;
 
 
-        // calcular qual o minuto mais proximo do numero recebido
-        while (1)
+        int continuar_busca = 1;
+
+        int ultimo_termo = termo_inicial_2;
+        int penultimo_termo = termo_inicial_1;
+        int termo_atual = 0;
+
+        int minuto_atual = 3;
+
+        // achar o termo da sequencia que mais
+        // se aproxima do numero recebido
+        while (continuar_busca == 1)
         {
-            int minuto_atual = termo1 + termo2;
-            int distancia_temp = abs(distancia_atual - minuto_atual);
+            termo_atual = ultimo_termo + penultimo_termo;
+            penultimo_termo = ultimo_termo;
+            ultimo_termo = termo_atual;
 
-            if (distancia_temp < distancia_atual)
+            int dist_atual = abs(termo_atual - numero_site);
+
+            if (dist_atual < menor_distancia)
             {
-                termo1 = termo2;
-                termo2 = minuto_atual;
-            } else if (distancia_temp > distancia_atual)
+                menor_distancia = dist_atual;
+            }
+
+            // se eh verdadeiro, nao eh possivel
+            // haver distancia menor
+            if (termo_atual >= numero_site)
             {
-                if (distancia_temp < minuto_mais_proximo)
-                {
-                    minuto_mais_proximo = distancia_temp;
-                    canal_mais_chance = i;
-
-                    // decompor e somar os algarismos
-                    int soma_algarismos = 0;
-                    int chance_temp = minuto_mais_proximo;
-                    int quant_algarismos_chance = floor(log10(minuto_mais_proximo));
-
-                    for (int i = 0; i < quant_algarismos_chance; i++)
-                    {
-                        soma_algarismos += chance_temp % 10; // somar ultimo algarismo
-                        chance_temp /= 10; // retirar um digito
-                    }
-
-                    if (soma_algarismos > 10)
-                    {
-                        pode_vip = 1;
-                    } else if (soma_algarismos <= 10)
-                    {
-                        pode_vip = 0;
-                    }
-                }
-
-                break;
-            } else if (distancia_atual == distancia_temp)
+                continuar_busca = 0;
+            } else
             {
-
+                minuto_atual += 1;
             }
         }
+
+
+        if (menor_distancia <= melhor_distancia)
+        {
+            melhor_distancia = menor_distancia;
+            melhor_canal = i + 1;
+            melhor_minuto = minuto_atual;
+
+            // testar se pode vip
+            int num_decompor = termo_atual;
+            int soma_digitos = 0;
+
+            while (num_decompor != 0)
+            {
+                soma_digitos += num_decompor % 10;
+                num_decompor /= 10;
+            }
+
+            if (soma_digitos > 10)
+            {
+                is_vip = 1;
+            }
+        }
+    }
+
+    if (is_vip == 1)
+    {
+        printf("Xupenio, para ir ao lulupalooza vc deve entrar no canal %d e sera chamado mais ou menos no minuto %d e com o VIP garantido!!!",
+            melhor_canal, melhor_minuto);
+    } else
+    {
+        printf("Xupenio, para ir ao lulupalooza vc deve entrar no canal %d e sera chamado mais ou menos no minuto %d, mas o ingresso VIP não vai rolar :(",
+            melhor_canal, melhor_minuto);
     }
 
 
     return EXIT_SUCCESS;
 }
+//sc,it

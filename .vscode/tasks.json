@@ -10,8 +10,7 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
-                "--std",
-                "c23"
+                "-lm"
             ],
             "options": {
                 "cwd": "${fileDirname}"

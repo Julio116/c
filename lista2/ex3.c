@@ -2,75 +2,76 @@
 #include <stdlib.h>
 #include <math.h>
 
+
 int main(void)
 {
-    long long N = 0;
-    long long K = 0;
-    long long P = 0;
+    long N = 0;
+    long K = 0;
+    long P = 0;
 
-    scanf("%lld %lld %lld", &N, &K, &P);
+    scanf("%ld %ld %ld", &N, &K, &P);
 
 
-    long long num_primo = 0;
-    long long quant_multiplos = 0;
-    long long achou_primeiro = 0;
+    long primeiro_procurado = 0;
+    long Q = 0;
 
-    // procurar o primo com divisores nao repetidos
-    for (long long i = N; i < P; i++)
+
+    // buscar divisores primos
+    // ate o numero atual
+    for (long i = N; i < K; i++)
     {
-        long long quant_multiplos_novos = 0;
+        long salvar_fatores = 1;
+        long num_fatores = 0;
 
-        // checar os divisores
-        for (long long j = 3; j < i; j++)
+        
+        long is_fator_repetido = 0;
+
+        for (long j = 3; j <= i; j += 2) // nao contar pares
         {
-            int is_multiplo = 0;
-            int is_multiplo_repetido = 0;
+            // verificar se o fator nao eh repetido
+            long fator_repetido = salvar_fatores % j;
 
-            // checar se os divisores se repetem
-            for (int k = 1; k <= 2; k++)
+
+            if (fator_repetido == 0)
             {
-                long long div_int = floor( i / (double) pow(j, k) );
-                long long div_n_int = i / (double) pow(j, k);
-
-                // checar se divisor aparece uma vez
-                if ((k == 1) && (div_int == div_n_int))
-                {
-                    is_multiplo = 1;
-                }
-
-                // checar se divisor se repete
-                if (is_multiplo)
-                {
-                    int teste_repetido = !(
-                        (k == 2) &&
-                        (is_multiplo == 1) &&
-                        (div_int == div_n_int)
-                    );
-
-                    if (teste_repetido)
-                    {
-                        is_multiplo_repetido = 1;
-                    } else
-                    {
-                        quant_multiplos_novos += 1;
-                    }
-                }
+                is_fator_repetido = 1;
+                break;
             }
 
-            // guardar o divisor valido
-            if (is_multiplo && !is_multiplo_repetido)
-            {
-                if (achou_primeiro)
-                {
 
-                } else
-                {
-                    num_primo *= j;
-                    quant_multiplos += 1;
-                    achou_primeiro = 1;
-                }
+            // verificar se a divisao eh numero inteiro
+            long is_div_int = i % j;
+
+            if (is_div_int == 0)
+            {
+                salvar_fatores *= j;
+                num_fatores += 1;
             }
         }
+
+        if (is_fator_repetido) continue;
+
+
+        // se o numero tem a quantidade
+        // de fatores desejada
+        if (num_fatores == P)
+        {
+            if (primeiro_procurado == 0)
+            {
+                primeiro_procurado = salvar_fatores;
+            }
+            
+            Q += 1;
+        }
+    }
+
+
+    if (Q != 0)
+    {
+        printf("%ld %ld", primeiro_procurado, Q);
+    } else
+    {
+        printf("Poxa dudinha, me desculpa, nao achei os numeros mas vou te mandar uma foto de um gatinho fofo.");
     }
 
 
