@@ -24,10 +24,10 @@ int main(void)
 
         if (instrucao == 'D' || instrucao == 'B')
         {
-            quant_vazios_print = posicao_x;
+            quant_vazios_print = posicao_x - 1;
         } else if (instrucao == 'E')
         {
-            quant_vazios_print = posicao_x - quant_instrucoes;
+            quant_vazios_print = posicao_x - quant_instrucoes - 1;
         }
 
 
@@ -44,36 +44,42 @@ int main(void)
             {
                 printf(".");
             }
+
             // print pontos
             for (int j = 0; j < quant_instrucoes; j++)
             {
                 printf(".");
             }
-            posicao_x += quant_instrucoes - 1;
+
+            posicao_x += quant_instrucoes;
 
             printf("\n");
         } else if (instrucao == 'B')
         {
-            for (int k = 0; k < quant_instrucoes - 1; k++)
+            if (quant_instrucoes != 1)
             {
-                // print vazios
-                for (int j = 0; j < quant_vazios_print; j++)
+                for (int k = 0; k < quant_instrucoes - 1; k++)
                 {
-                    printf(" ");
-                }
+                    {
+                        for (int j = 0; j < quant_vazios_print; j++)
+                        {
+                            printf(" ");
+                        }
 
-                if (quant_instrucoes == 1)
-                {
-                    // printf("\n");
-                } else
-                {
-                    printf(".\n");
-                }
+                        printf(".\n");
+                    }
 
-                posicao_y++;
+                    posicao_y++;
+                }
             }
         } else if (instrucao == 'E')
         {
+            if (posicao_x - quant_instrucoes < 0)
+            {
+                printf("Informacao invalida");
+                break;
+            }
+
             // print vazios
             for (int j = 0; j < quant_vazios_print; j++)
             {
@@ -81,7 +87,7 @@ int main(void)
             }
 
             // print pontos
-            for (int j = 0; j < posicao_x - quant_vazios_print + 1; j++)
+            for (int j = 0; j < posicao_x - quant_vazios_print; j++)
             {
                 printf(".");
             }

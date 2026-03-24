@@ -1,0 +1,1 @@
+{"name":"Local: ex4","url":"/home/debian/Documents/c/lista3/ex4.c","tests":[{"id":1774035368826,"input":"3\nXOXXO 1\nXOXXO 2\nXOXXO 13","output":"OOXXO\nXXOXO\nOOOOO\nOOXXO%XXOXO#OOOOO"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/debian/Documents/c/lista3/ex4.c","group":"local","local":true}
