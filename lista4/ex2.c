@@ -1,80 +1,23 @@
-// qual o indice add a addposicaogota eh x y da parede
-// verificar gota_x e gota_y final apos rodar o programa
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
-// inicializar `posicoes_gotas` apenas com '-1'
-void inicializar_posicoes_gotas(int parede_vertical, int parede_horizontal,
-  int posicoes_gotas[parede_horizontal][parede_horizontal][2])
+// recebe entrada do teclado
+void receber_parede(int lim_x, int lim_y, char parede[][lim_y])
 {
-  for (int i = 0; i < parede_horizontal; ++i)
-  {
-    for (int j = 0; j < parede_vertical; ++j)
-    {
-      for (int k = 0; k < 2; ++k)
-      {
-        posicoes_gotas[i][j][k] = -1;
-      }
-    }
-  }
-}
-
-
-void receber_array_parede(int parede_horizontal, int parede_vertical,
-  char parede[][parede_vertical])
-{
-  // salvar na matriz `parede`
-  for (int i = 0; i < parede_horizontal; ++i)
+  for (int i = 0; i < lim_x; i++)
   {
     scanf("%s", parede[i]);
   }
 }
 
 
-void salvar_gota_inicial_pos(int parede_horizontal, int parede_vertical,
-  char parede[parede_horizontal][parede_vertical],
-  int posicoes_gotas[parede_horizontal][parede_vertical][2])
+void print_parede(int lim_x, int lim_y, char parede[][lim_y])
 {
-  for (int i = 0; i < parede_horizontal; ++i)
+  for (int i = 0; i < lim_x; i++)
   {
-    for (int j = 0; j < parede_vertical; ++j)
-    {
-      if ( parede[i][j] == 'o' )
-      {
-        // achar posicao valida para inserir gota
-        int k = 0;
-
-        // flag do while
-        int elemento_achado = 0;
-
-        while( elemento_achado == 0 && k < parede_vertical )
-        {
-          int pos_x = posicoes_gotas[i][k][0];
-          int pos_y = posicoes_gotas[i][k][1];
-
-          // salvar em posicao nao ocupada
-          if ( pos_x == -1 && pos_y == -1 )
-          {
-            posicoes_gotas[i][k][0] = i;
-            posicoes_gotas[i][k][1] = j;
-            elemento_achado = 1;
-          }
-
-          k++;
-        }
-      }
-    }
-  }
-}
-
-
-void print_parede(int size_x, int size_y, char parede[size_x][size_y])
-{
-  for (int i = 0; i < size_x; ++i)
-  {
-    for (int j = 0; j < size_y; ++j)
+    for (int j = 0; j < lim_y; j++)
     {
       printf("%c", parede[i][j]);
     }
@@ -82,249 +25,408 @@ void print_parede(int size_x, int size_y, char parede[size_x][size_y])
   }
 }
 
-void add_posicao_gota(int x, int y, int limite_y, int posicoes_gotas[][limite_y][2])
-{
-  // procurar primeira posicao nao ocupada (com -1)
-  for (int i = 0; i < limite_y; ++i)
-  {
-    int pos_x_i = posicoes_gotas[x][i][0];
 
-    // posicao nao ocupada (com -1)
-    if ( pos_x_i != -1 )
+// checar se a posicao horizontal/vertical esta na parede
+int is_dentro_mapa(int pos, int lim_pos)
+{
+  int is_pos_limitada = (pos >= 0) && (pos < lim_pos);
+
+  if (is_pos_limitada)
+  {
+    return 1;
+  } else
+  {
+    return 0;
+  }
+}
+
+
+// retorna -1 caso nao exista estante abaixo da gota,
+// retorna o numero da linha caso haja
+int ha_estante_vertical(int x, int y, int lim_x, int lim_y, char parede[][lim_y])
+{
+  int linha_atual = x;
+  int dentro_parede = 1;
+
+  while (dentro_parede)
+  {
+    char chr_atual = parede[linha_atual][y];
+
+    if (chr_atual == '#')
     {
-      posicoes_gotas[x][i][0] = x;
-      posicoes_gotas[x][i][1] = y;
+      return linha_atual;
+    }
+
+    linha_atual++;
+    dentro_parede = linha_atual < lim_x;
+  }
+
+  return -1;
+}
+
+
+// -1 se nao houver nada a direita,
+// e a posicao do obstaculo, se houver
+int get_pos_obstaculo_horiz(int x, int y, int lim_x, int lim_y, int direcao, char parede[][lim_y])
+{
+  int is_limitado = 1;
+
+  while (is_limitado)
+  {
+    char chr_atual = parede[x][y];
+    int is_obstaculo = chr_atual == '#';
+
+    if (is_obstaculo)
+    {
+      return y;
+    }
+
+    if (direcao == 0) { // esquerda
+      is_limitado = is_dentro_mapa(y - 1, lim_y);
+
+      if (is_limitado)
+        y--;
+    } else { // direita
+      is_limitado = is_dentro_mapa(y + 1, lim_y);
+
+      if (is_limitado)
+        y++;
+    }
+  }
+
+  return -1;
+}
+
+
+// printar a gota na parede,
+// da posicao atual ate a posicao final especificada
+void print_gota_vertical(int x, int y, int final_pos, int lim_y, char parede[][lim_y])
+{
+  for (int i = x; i < final_pos; ++i)
+  {
+    parede[i][y] = 'o';
+  }
+}
+
+
+// printar a gota na parede,
+// da posicao atual ate a posicao final especificada,
+// direcao: +1 direita, -1 esquerda
+void print_gota_horizontal(int x, int y, int final_pos, int lim_y, int direcao, char parede[][lim_y])
+{
+  if (direcao == 0) { // esquerda
+    // printf("|%d", final_pos);
+    for (int j = y; j > final_pos; --j)
+    {
+      parede[x][j] = 'o';
+    }
+  } else { // direita
+    for (int j = y; j < final_pos; ++j)
+    {
+      parede[x][j] = 'o';
     }
   }
 }
 
 
-int correr_gota_esquerda(int gota_x, int gota_y, int limite_x, int limite_y,
-  int continuar_percorrendo, char parede[][limite_y])
+// recebe posicao de gota, desce ate a primeira estante, ou ate o fim da parede
+int escorrer_vertical(int x, int y, int lim_x, int lim_y, char parede[][lim_y])
 {
-  int is_dentro_limite_x = gota_y >= 0;
-  int is_dentro_limite_y = gota_x < limite_x;
+  int pos_estante = ha_estante_vertical(x, y, lim_x, lim_y, parede);
 
-  while (is_dentro_limite_y && is_dentro_limite_x)
+  if (pos_estante >= 0) // escorrer ate a proxima estante
   {
-    // atualizar limites
-    is_dentro_limite_x = gota_y >= 0;
-    is_dentro_limite_y = gota_x < limite_x;
+    print_gota_vertical(x, y, pos_estante, lim_y, parede);
 
-    // atualizar apenas os que estao dentro dos limites
+    return pos_estante - 1;
+  } else // escorrer ate o final da parede
+  {
+    print_gota_vertical(x, y, lim_x, lim_y, parede);
 
-    char diagonal_chr = '\0';
-    char abaixo_chr = '\0';
-    char esquerdo_chr = '\0';
-
-    // ha mais uma linha abaixo
-    if (gota_x + 1 < limite_x)
-    {
-      diagonal_chr = parede[gota_x + 1][gota_y - 1];
-      abaixo_chr = parede[gota_x + 1][gota_y];
-    }
-
-    // ha mais uma coluna ao lado
-    if (gota_y - 1 >= 0)
-    {
-      esquerdo_chr = parede[gota_x][gota_y - 1];
-    }
-
-    /* caso ultima linha */
-    /* salvar posicoes de gotas */
-
-    // acima de estante, coluna ao lado vazia
-    if (diagonal_chr == '#' && esquerdo_chr == '.')
-    {
-      parede[gota_x][gota_y - 1] = 'o';
-      gota_y--;
-    } // acima de estante, quina da estante
-    else if (abaixo_chr == '#' && diagonal_chr == '.' && esquerdo_chr == '.')
-    {
-      parede[gota_x][gota_y - 1] = 'o';
-      gota_y--;
-
-      is_dentro_limite_x = 0;
-      is_dentro_limite_y = 0;
-    } // ultima linha
-    else if (esquerdo_chr == '.')
-    {
-      parede[gota_x][gota_y - 1] = 'o';
-      gota_y--;
-    } // finalizar desenho na parede
-    else
-    {
-      is_dentro_limite_x = 0;
-      is_dentro_limite_y = 0;
-    }
+    return lim_x;
   }
+}
+
+
+// escorrer gota 'o' na parede, na horizontal. com direcao: 0 esquerda, 1 direita.
+// retorna coluna da gota
+int escorrer_horizontal(int x, int y, int lim_x, int lim_y, int direcao, char parede[][lim_y])
+{
+  int pos_obstaculo = get_pos_obstaculo_horiz(x, y, lim_x, lim_y, direcao, parede);
+  int ha_obstaculo = is_dentro_mapa(pos_obstaculo, lim_y);
+
   
-  return gota_y;
+  // se nao houver obstaculos,
+  // a posicao sera na borda
+  if (pos_obstaculo == -1) {
+    if (direcao == 0) { // esquerda
+      pos_obstaculo = 0;
+    }
+
+    if (direcao == 1) { // direita
+      pos_obstaculo = lim_y - 1;
+    }
+  }
+  printf("pos_obstaculo ha_obstaculo %d %d\n", pos_obstaculo, ha_obstaculo);
+
+  if (ha_obstaculo) {
+    // se esta na ultima linha nao escorra
+    if (x < lim_x - 1) {
+      print_gota_horizontal(x, y, pos_obstaculo, lim_y, direcao, parede);
+    }
+  } else {
+    // se esta na ultima linha nao escorra
+    if (x < lim_x - 1) {
+      if (direcao == 0) { // esquerda
+        print_gota_horizontal(x, y, -1, lim_y, direcao, parede);
+        pos_obstaculo = 0;
+      }
+
+      if (direcao == 1) { // direita
+        print_gota_horizontal(x, y, lim_y, lim_y, direcao, parede);
+        pos_obstaculo = lim_y - 1;
+      }
+    }
+  }
+
+  return pos_obstaculo;
 }
 
 
-int correr_gota_direita(int gota_x, int gota_y, int limite_x, int limite_y,
-  int continuar_percorrendo, char parede[][limite_y])
+// registrar o primeiro 'o' achado na parede
+void achar_gota_inicial(int lim_x, int lim_y, char parede[][lim_y], int pos_gota[])
 {
-  int is_dentro_limite_x = gota_y >= 0;
-  int is_dentro_limite_y = gota_x < limite_x;
-
-  while (is_dentro_limite_y && is_dentro_limite_x)
+  for (int i = 0; i < lim_x; ++i)
   {
-    // atualizar limites
-    is_dentro_limite_x = gota_y >= 0;
-    is_dentro_limite_y = gota_x < limite_x;
-
-    // atualizar apenas os que estao dentro dos limites
-
-    char diagonal_chr = '\0';
-    char abaixo_chr = '\0';
-    char direita_chr = '\0';
-
-    // ha mais uma linha abaixo
-    if (gota_x + 1 < limite_x)
+    for (int j = 0; j < lim_y; ++j)
     {
-      diagonal_chr = parede[gota_x + 1][gota_y + 1];
-      abaixo_chr = parede[gota_x + 1][gota_y];
-    }
+      char atual_chr = parede[i][j];
 
-    // ha mais uma coluna ao lado
-    if (gota_y + 1 < limite_y)
-    {
-      direita_chr = parede[gota_x][gota_y + 1];
-    }
+      if (atual_chr == 'o')
+      {
+        pos_gota[0] = i;
+        pos_gota[1] = j;
 
-    /* caso ultima linha */
-    /* salvar posicoes de gotas */
-
-    // acima de estante, coluna ao lado vazia
-    if (diagonal_chr == '#' && direita_chr == '.')
-    {
-      parede[gota_x][gota_y + 1] = 'o';
-      gota_y++;
-    } // acima de estante, quina da estante
-    else if (abaixo_chr == '#' && diagonal_chr == '.' && direita_chr == '.')
-    {
-      parede[gota_x][gota_y + 1] = 'o';
-      gota_y++;
-
-      is_dentro_limite_x = 0;
-      is_dentro_limite_y = 0;
-    } // ultima linha
-    else if (direita_chr == '.')
-    {
-      parede[gota_x][gota_y + 1] = 'o';
-      gota_y++;
-    } // finalizar desenho na parede
-    else
-    {
-      is_dentro_limite_x = 0;
-      is_dentro_limite_y = 0;
+        return;
+      }
     }
   }
-  
-  return gota_y;
 }
 
 
-int escorrer_gota_vertical(int gota_x, int gota_y, int limite_x, int limite_y, char parede[][limite_y], int posicoes_gotas[][limite_y][2])
-{
-  int ha_linha_abaixo = gota_x + 1 < limite_x;
-  char abaixo_chr = '\0';
+// inserir na primeira posicao nao '-1', retorna 1, senao retorna 0
+int add_gota(int x, int y, int num_gotas, int gotas_pos[][2]) {
+  int inseriu_gota = 0;
+  int i = 0;
 
-  if (ha_linha_abaixo)
-  {
-    abaixo_chr = parede[gota_x + 1][gota_y];
+  while ((inseriu_gota == 0) && (i < num_gotas)) {
+    int x_atual = gotas_pos[i][0];
+    
+    if (x_atual == -1) {
+      gotas_pos[i][0] = x;
+      gotas_pos[i][1] = y;
+
+      inseriu_gota = 1;
+    }
+
+    i++;
   }
 
-  // desenhar gota 'o' ate a proxima estante
-  while (abaixo_chr == '.' && ha_linha_abaixo)
+  if (inseriu_gota) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+
+// remove a primeira ocorrencia da gota dada
+int remover_gota(int x, int y, int num_gotas, int gotas_pos[][2]) {
+  int removeu_gota = 0;
+  int i = 0;
+
+  while ((removeu_gota == 0) && (i < num_gotas)) {
+    int x_atual = gotas_pos[i][0];
+    int y_atual = gotas_pos[i][1];
+    
+    if ((x_atual == x) && (y_atual == y)) {
+      gotas_pos[i][0] = -1;
+      gotas_pos[i][1] = -1;
+
+      removeu_gota = 1;
+    }
+
+    i++;
+  }
+
+  if (removeu_gota) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+
+int get_proxima_gota(int nova_gota[], int num_gotas, int gotas_pos[][2]) {
+  int achou_gota = 0;
+  int i = 0;
+
+  while ((achou_gota == 0) && (i < num_gotas)) {
+    int x_atual = gotas_pos[i][0];
+    
+    if (x_atual != -1) {
+      int x = gotas_pos[i][0];
+      int y = gotas_pos[i][1];
+
+      nova_gota[0] = x;
+      nova_gota[1] = y;
+
+      achou_gota = 1;
+    }
+
+    i++;
+  }
+
+  if (achou_gota) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+
+int ha_gotas(int num_gotas, int gotas_pos[][2]) {
+  int achou_gota = 0;
+  int i = 0;
+
+  while ((achou_gota == 0) && (i < num_gotas)) {
+    int x_atual = gotas_pos[i][0];
+    
+    if (x_atual != -1)
+      achou_gota = 1;
+
+    i++;
+  }
+
+  if (achou_gota) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+
+// inicializar gotas com -1
+void inicializar_gotas(int num_gotas, int gotas[][2]) {
+  for (int i = 0; i < num_gotas; ++i)
   {
-    parede[gota_x + 1][gota_y] = 'o';
-    gota_x++;
+    gotas[i][0] = -1;
+    gotas[i][1] = -1;
+  }
+}
 
-    // atualizar dados
-    ha_linha_abaixo = gota_x + 1 < limite_x;
 
-    if (ha_linha_abaixo)
-    {
-      abaixo_chr = parede[gota_x + 1][gota_y];
+void percorrer_gota(int x_inicial, int y_inicial, int lim_x, int lim_y, char parede[][lim_y])
+{
+  int num_gotas = lim_x * lim_y;
+
+  // gotas a serem processadas
+  int gotas_pos[num_gotas][2];
+
+  inicializar_gotas(num_gotas, gotas_pos);
+
+  // adicionar gota inicial
+  add_gota(x_inicial, y_inicial, num_gotas, gotas_pos);
+
+  int existem_gotas = ha_gotas(num_gotas, gotas_pos);
+
+  // faz a gota correr na vertical, esquerda e direita,
+  // fazer correrem as novas gotas, ate nao ser mais possivel
+  // while (existem_gotas) {
+  for (int i = 0; i < 3; ++i) {
+    int nova_gota[2] = { -1, -1 };
+
+    int achou_gota = get_proxima_gota(nova_gota, num_gotas, gotas_pos);
+    printf("antigas_gotas %d %d\n", nova_gota[0], nova_gota[1]);
+    
+    if (achou_gota) {
+      int x_antes = nova_gota[0];
+      int y_antes = nova_gota[1];
+
+      int moveu_vertical = 0;
+      int moveu_esquerda = 0;
+      int moveu_direita = 0;
+
+      // descer na vertical
+      int x_depois = escorrer_vertical(x_antes, y_antes, lim_x, lim_y, parede);
+
+      if (x_depois != x_antes) {
+        add_gota(x_depois, y_antes, num_gotas, gotas_pos);
+        moveu_vertical = 1;
+      }
+
+      // mover gota para a esquerda
+      int y_esquerda = escorrer_horizontal(x_depois, y_antes, lim_x, lim_y, 0, parede);
+      printf("x_depois y_esquerda %d %d\n", x_depois, y_esquerda);
+      printf("\n");
+
+      if (y_esquerda != y_antes) { // se moveu
+        add_gota(x_depois, y_esquerda, num_gotas, gotas_pos);
+        moveu_esquerda = 1;
+      }
+
+      // mover gota para a esquerda
+      int y_direita = escorrer_horizontal(x_depois, y_antes, lim_x, lim_y, 1, parede);
+
+      if (y_direita != y_antes) { // se moveu
+        add_gota(x_depois, y_direita, num_gotas, gotas_pos);
+        moveu_direita = 1;
+      }
+
+
+      // remover as gotas ja percorridas
+      if (moveu_vertical) {
+        remover_gota(x_antes, y_antes, num_gotas, gotas_pos);
+      }
+
+      if (moveu_esquerda || moveu_direita) {
+        remover_gota(x_depois, y_antes, num_gotas, gotas_pos);
+      }
+
+      existem_gotas = ha_gotas(num_gotas, gotas_pos);
+    } else {
+      existem_gotas = 0;
     }
   }
-
-  return gota_x;
 }
 
 
 int main(void)
 {
-    int parede_horizontal = 0;
-    int parede_vertical = 0;
+  int lim_x = 0;
+  int lim_y = 0;
 
-    scanf("%d %d", &parede_horizontal, &parede_vertical);
-
-
-    char parede[parede_horizontal][parede_vertical];
-
-    receber_array_parede(parede_horizontal, parede_vertical, parede);
+  scanf("%d %d", &lim_x, &lim_y);
 
 
-    // o primeiro indice identifica a linha,
-    // o segundo indice identifica a gota,
-    // a terceira, a coordenada, x ou y.
-    // pode haver mais de uma gota por linha
-    int posicoes_gotas[parede_horizontal][parede_vertical][2];
+  char parede[lim_x][lim_y];
 
-    inicializar_posicoes_gotas(parede_vertical, parede_horizontal,
-      posicoes_gotas);
-
-    salvar_gota_inicial_pos(parede_horizontal, parede_vertical,
-      parede, posicoes_gotas);
-
-    // processar as gotas restantes,
-    // a partir de suas posicoes
-    for (int i = 0; i < parede_horizontal; ++i)
-    {
-      for (int j = 0; j < parede_vertical; ++j)
-      {
-        int gota_x = posicoes_gotas[i][j][0];
-        int gota_y = posicoes_gotas[i][j][1];
-
-        gota_x = escorrer_gota_vertical(gota_x, gota_y, parede_horizontal,
-          parede_vertical, parede, posicoes_gotas);
+  int k = lim_y;
+  receber_parede(lim_x, lim_y, parede);
+  lim_y = k;
 
 
-        int gota_pos_esquerda = gota_y;
-        int is_limitado_y_esquerda = (gota_pos_esquerda - 1) > 0;
+  int gota_inicial[2] = { -1, -1 };
 
-        // desenhar 'o' para a esquerda
-        gota_pos_esquerda = correr_gota_esquerda(gota_x, gota_pos_esquerda, parede_horizontal, parede_vertical, is_limitado_y_esquerda, parede);
-
-        // se a gota andou para o lado
-        if (gota_pos_esquerda != gota_y)
-        {
-          add_posicao_gota(gota_x, gota_pos_esquerda, parede_horizontal, posicoes_gotas);
-        }
+  achar_gota_inicial(lim_x, lim_y, parede, gota_inicial);
 
 
-        int gota_pos_direita = gota_y;
-        int is_limitado_y_direita = gota_pos_direita + 1 < parede_vertical;
+  int x = gota_inicial[0];
+  int y = gota_inicial[1];
 
-        // desenhar 'o' para a direita
-        gota_pos_esquerda = correr_gota_direita(gota_x, gota_pos_direita, parede_horizontal, parede_vertical, is_limitado_y_direita, parede);
+  percorrer_gota(x, y, lim_x, lim_y, parede);
 
-        // se a gota andou para o lado
-        if (gota_pos_direita != gota_y)
-        {
-          /* falta remover a gota que deu origem de posicoes gotas */
-          add_posicao_gota(gota_x, gota_pos_direita,
-            parede_horizontal, posicoes_gotas);
-        }
-      }
-    }
+  print_parede(lim_x, lim_y, parede);
 
-    print_parede(parede_horizontal, parede_vertical, parede);
-
-
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }

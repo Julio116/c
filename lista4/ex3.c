@@ -2,39 +2,44 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 /*
 multiplas saidas?
 */
 
-
 // receber mapa por entrada do teclado
-void receber_mapa(int size_x, int size_y, char mapa[][size_y])
+void receber_mapa(int limite_x, int limite_y, char mapa[][limite_y])
 {
-    for (int i = 0; i < size_x; ++i)
-    {
-        scanf("%s", mapa[i]);
-    }
+  for (int i = 0; i < limite_x; ++i)
+  {
+    scanf("%s", mapa[i]);
+  }
 }
 
-
-// procurar a posicao inicial no mapa e registrar em `posicao_inicial`
-void set_posicao_inicial(int size_x, int size_y,
-  int pos_inicial[2], char mapa[size_x][size_y])
+// procurar o primeiro 'o' para posicao inicial
+void set_posicao_inicial(int limite_x, int limite_y, int pos_inicial[], char mapa[][limite_y])
 {
-  for (int i = 0; i < size_x; ++i)
+  int continuar_buscando = 0;
+
+  int i = 0;
+  int j = 0;
+
+  while (continuar_buscando)
   {
-    for (int j = 0; j < size_y; ++j)
+    // se dentro do mapa
+    if ((i < limite_x) && (j < limite_y))
     {
       if ( mapa[i][j] == 'o' )
       {
         pos_inicial[0] = i;
         pos_inicial[1] = j;
       }
+    } else // fim de uma linha
+    {
+      i = 0;
+      j++;
     }
   }
 }
-
 
 // inicializar com coordenadas -1, e distancia percorrida 0
 void inicializar_caminhos(int num_total, int caminhos[][3])
@@ -47,19 +52,17 @@ void inicializar_caminhos(int num_total, int caminhos[][3])
   }
 }
 
-
 // inicializar matriz binaria de lugares visitados
-void inicializar_visitados(int size_x, int size_y, int ja_visitados[][size_y])
+void inicializar_visitados(int limite_x, int limite_y, int ja_visitados[][limite_y])
 {
-  for (int i = 0; i < size_x; ++i)
+  for (int i = 0; i < limite_x; ++i)
   {
-    for (int j = 0; j < size_y; ++j)
+    for (int j = 0; j < limite_y; ++j)
     {
       ja_visitados[i][j] = 0;
     }
   }
 }
-
 
 int adicionar_novo_caminho(int pos_x, int pos_y,
   int dist_percorrida, int caminhos[][3], int ja_visitados[][])
@@ -86,55 +89,74 @@ int adicionar_novo_caminho(int pos_x, int pos_y,
 }
 
 
+// testar se as coordenadas estao dentro do mapa
+int calc_limite_valido(int x, int y, int limite_x, int limite_y)
+{
+  int is_x_valido = (x >= 0) && (x < limite_x);
+  int is_y_valido = (y >= 0) && (y < limite_y);
+
+  if (is_x_valido && is_y_valido)
+  {
+    return 1;
+  } else
+  {
+    return 0;
+  }
+}
+
+
 int calc_caminhos_redor(int x, int y, int lim_x, int lim_y,
   int mapa[][lim_y], int ja_visitados[][lim_y])
 {
-  int is_dentro_limite_x = 0;
-  if (x - 1 >= 0
-  {
+  int is_esquerdo_limite_valido = calc_limite_valido(x - 1, y, lim_x, lim_y);
+  int is_direita_limite_valido = calc_limite_valido(x + 1, y, lim_x, lim_y);
+  int is_baixo_limite_valido = calc_limite_valido(x, y + 1, lim_x, lim_y);
+  int is_cima_limite_valido = calc_limite_valido(x, y - 1, lim_x, lim_y);
 
+  if (is_esquerdo_limite_valido)
+  {
+    char nova_pos = mapa[x - 1][y];
+    int is_visitado = ja_visitados[x - 1][y];
+
+    if (!is_visitado && nova_pos == '_')
+    {
+
+    }
   }
 }
 
 
 int main(void)
 {
-  int size_x = 0;
-  int size_y = 0;
+  int limite_x = 0;
+  int limite_y = 0;
 
-  scanf("%dx%d", &size_x, &size_y);
+  scanf("%dx%d", &limite_x, &limite_y);
 
-
-  char mapa[size_x][size_y];
-
-  receber_mapa(size_x, size_y, mapa);
+  int num_total_caminhos = limite_x * limite_y;
 
 
-  // matriz das posicoes ja visitadas no mapa
-  int ja_visitados[size_x][size_y];
+  char mapa[limite_x][limite_y];
 
-  inicializar_visitados(size_x, size_y, ja_visitados);
+  receber_mapa(limite_x, limite_y, mapa);
 
-
-  int num_total_caminhos = size_x * size_y;
 
   // todos as posicoes a serem percorridas no formato:
   // (x, y, distancia_percorrida)
   int caminhos[num_total_caminhos][3];
 
-  int caminhos_i = 0;
-
   inicializar_caminhos(num_total_caminhos, caminhos);
+
 
   // formato (x, y, distancia_percorrida)
   int pos_inicial[3] = { -1, -1, 0 };
 
-  set_posicao_inicial(size_x, size_y, pos_inicial, mapa);
+  set_posicao_inicial(limite_x, limite_y, pos_inicial, mapa);
+
 
   // registrando a posicao inicial em `caminhos`
   memcpy(caminhos[0], pos_inicial, sizeof(pos_inicial));
 
-  caminhos_i++;
 
   // processar os caminhos
   for (int i = 0; i < num_total_caminhos; ++i)
@@ -143,30 +165,18 @@ int main(void)
     int pos_y = caminhos[i][1];
     int dist_percorrida = caminhos[i][2];
 
-    if ( mapa[pos_x][pos_y] != 'd' )
+    char pos_chr = mapa[pos_x][pos_y];
+
+    if ( pos_chr != 'd' )
     {
       caminhos[i][2] += 1;
 
-      int qnt_validos_redor = calc_caminhos_redor();
+      int qnt_caminhos_redor = calc_caminhos_redor();
     } else
     {
       caminhos[i][2] += 1;
     }
   }
   
-
-  /*
-  if atual nao 'd'
-    checar se ha caminhavel ao redor nao visitado
-      checar 4 posicoes ao redor, caminhavel, limite mapa, posicoes ocupadas
-      quant posicoes validas
-
-      se 1 caminhavel e nao visitado
-        ande +1
-      se >1 caminhavel e nao visitado
-        para cada um-1
-          posicao add no array de caminhos
-          somar +1 na distancia de cada caminho desses + distancia atual ja feita
-  */
   return EXIT_SUCCESS;
 }
