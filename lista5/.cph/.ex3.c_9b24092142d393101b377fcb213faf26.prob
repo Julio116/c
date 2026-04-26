@@ -1,0 +1,1 @@
+{"name":"Local: ex3","url":"/home/debian/Documents/c/lista5/ex3.c","tests":[{"id":1776264041750,"input":"1","output":"Mais um bom dia de trabalho!\n1\nVou visitar esses lugares de novo... algum dia."}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/debian/Documents/c/lista5/ex3.c","group":"local","local":true}
