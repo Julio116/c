@@ -1,0 +1,1 @@
+{"name":"Local: ex2","url":"/home/debian/Documents/c/lista9/ex2.c","tests":[{"id":1780798724953,"input":"R\nI 5 1\nL\nR\nL\nF","output":"Fila vazia\nid=5 prioridade=1\nRemovida: id=5 prioridade=1\nFila vazia"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/debian/Documents/c/lista9/ex2.c","group":"local","local":true}
