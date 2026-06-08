@@ -31,7 +31,7 @@ void insertNode(PlayerNodePtr *playerPtr, int value) {
         } else if (value > (*playerPtr)->data) {
             insertNode(&((*playerPtr))->rightPtr, value);
         } else {
-            puts("valor duplicado");
+            // puts("valor duplicado");
         }
     }
 }
@@ -41,7 +41,7 @@ void insertNode(PlayerNodePtr *playerPtr, int value) {
 void inOrder(PlayerNodePtr playerPtr) {
     if (playerPtr != NULL) {
         inOrder(playerPtr->leftPtr);
-        printf("%3d", playerPtr->data);
+        printf(" %d", playerPtr->data);
         inOrder(playerPtr->rightPtr);
     }
 }
@@ -50,7 +50,7 @@ void inOrder(PlayerNodePtr playerPtr) {
 // percorrer a arvore preorder, se nao estiver vazia
 void preOrder(PlayerNodePtr playerPtr) {
     if (playerPtr != NULL) {
-        printf("%3d", playerPtr->data);
+        printf(" %d", playerPtr->data);
         preOrder(playerPtr->leftPtr);
         preOrder(playerPtr->rightPtr);
     }
@@ -62,7 +62,7 @@ void postOrder(PlayerNodePtr playerPtr) {
     if (playerPtr != NULL) {
         postOrder(playerPtr->leftPtr);
         postOrder(playerPtr->rightPtr);
-        printf("%3d", playerPtr->data);
+        printf(" %d", playerPtr->data);
     }
 }
 
@@ -80,44 +80,78 @@ int countTree(PlayerNodePtr playerPtr) {
 }
 
 
+int max(int a, int b) {
+    return (a > b ? a : b);
+}
+
+
 int getMax(PlayerNodePtr playerPtr) {
-    int max = INT_MIN;
+    int buff = INT_MIN;
 
     if (playerPtr != NULL) {
         int currentData = playerPtr->data;
-        max = (currentData > max) ? currentData : max;
+        buff = max(currentData, buff);
 
         int tmpLeft = getMax(playerPtr->leftPtr);
-        max = (tmpLeft > max) ? tmpLeft : max;
+        buff = max(tmpLeft, buff);
 
         int tmpRight = getMax(playerPtr->rightPtr);
-        max = (tmpRight > max) ? tmpRight : max;
+        buff = max(tmpRight, buff);
     }
 
-    return max;
+    return buff;
+}
+
+
+int min(int a, int b) {
+    return (a < b ? a : b);
 }
 
 
 int getMin(PlayerNodePtr playerPtr) {
-    int min = INT_MAX;
+    int buff = INT_MAX;
 
     if (playerPtr != NULL) {
         int currentData = playerPtr->data;
-        min = (currentData < min) ? currentData : min;
+        buff = min(currentData, buff);
 
         int tmpLeft = getMin(playerPtr->leftPtr);
-        min = (tmpLeft < min) ? tmpLeft : min;
+        buff = min(tmpLeft, buff);
 
         int tmpRight = getMin(playerPtr->rightPtr);
-        min = (tmpRight < min) ? tmpRight : min;
+        buff = min(tmpRight, buff);
     }
 
-    return min;
+    return buff;
 }
 
 
-int getHeight(PlayerNodePtr playerPtr) {
+int countLeaves(PlayerNodePtr playerPtr) {
+    if (!playerPtr) {
+        return 0;
+    }
 
+    if (playerPtr->leftPtr == NULL && playerPtr->rightPtr == NULL) {
+        return 1;
+    }
+
+    return countLeaves(playerPtr->leftPtr) + countLeaves(playerPtr->rightPtr);
+}
+
+
+int getHeight(PlayerNodePtr topPtr) {
+    if (!topPtr) {
+        return -1;
+    }
+
+    int left_height = getHeight(topPtr->leftPtr);
+    int right_height = getHeight(topPtr->rightPtr);
+
+    if (left_height > right_height) {
+        return left_height + 1;
+    } else {
+        return right_height + 1;
+    }
 }
 
 
@@ -137,20 +171,30 @@ int main(void) {
         }
     }
 
+    int num_nos = countTree(iniPtr);
 
-    preOrder(iniPtr);
-    puts("");
+    if (num_nos == 0) {
+        printf("ARVORE VAZIA\n");
+    } else {
+        printf("PREORDEM:");
+        preOrder(iniPtr);
+        printf("\n");
 
-    postOrder(iniPtr);
-    puts("");
+        printf("EMORDEM:");
+        inOrder(iniPtr);
+        printf("\n");
 
-    inOrder(iniPtr);
-    puts("");
+        printf("POSORDEM:");
+        postOrder(iniPtr);
+        printf("\n");
 
 
-    printf("\n%d", countTree(iniPtr));
-    printf("\n%d", getMax(iniPtr));
-    printf("\n%d", getMin(iniPtr));
+        printf("NOS: %d\n", countTree(iniPtr));
+        printf("FOLHAS: %d\n", countLeaves(iniPtr));
+        printf("ALTURA: %d\n", getHeight(iniPtr));
+        printf("MENOR: %d\n", getMin(iniPtr));
+        printf("MAIOR: %d\n", getMax(iniPtr));
+    }
 
 
     return EXIT_SUCCESS;
