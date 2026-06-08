@@ -2,16 +2,7 @@
 #include <stdlib.h>
 
 
-typedef struct stackNode StackNode;
-typedef struct ColorReplacement ColorReplacement;
-
-typedef StackNode *StackNodePtr;
-
-typedef enum Color Color;
-
-enum Color {
-    RED='r', GREEN='g', BLUE='b', CYAN='c', MAGENTA='m', YELLOW='y'
-};
+char COLORS[7] = { 'r', 'g', 'b', 'c', 'm', 'y', '\0' };
 
 
 struct stackNode {
@@ -21,10 +12,15 @@ struct stackNode {
 
 
 struct ColorReplacement {
-    char colorCheck1;
-    char colorCheck2;
+    char color1;
+    char color2;
     char colorReplace;
 };
+
+
+typedef struct stackNode StackNode;
+typedef struct ColorReplacement ColorReplacement;
+typedef StackNode *StackNodePtr;
 
 
 void push(StackNodePtr *topPtr, char color) {
@@ -74,10 +70,14 @@ int isEmpty(StackNodePtr topPtr) {
 // que remove um trio apenas uma vez.
 int popTripleColor(StackNodePtr *topPtr, char color) {
     unsigned numSameColor = 0;
+    int found_triple = 0;
     StackNodePtr currentPtr = *topPtr;
-    int eliminou = 0;
 
-    while (currentPtr != NULL) {
+    for (size_t i = 0; i < 3; ++i) {
+        if (currentPtr == NULL) {
+            return found_triple;
+        }
+
         if (currentPtr->color == color) {
             numSameColor++;
         }
@@ -86,67 +86,77 @@ int popTripleColor(StackNodePtr *topPtr, char color) {
             pop(topPtr);
             pop(topPtr);
             pop(topPtr);
-
-            currentPtr = NULL;
-            eliminou = 1;
+            found_triple = 1;
         } else {
             currentPtr = currentPtr->nextPtr;
         }
     }
 
-    return eliminou;
+    return found_triple;
 }
 
 
 // Checa se `colorReplacement` está no topo da stack,
 // se estiver, o substitui. se nao estiver, nao altera a stack
-void replaceColor(StackNodePtr *topPtr, ColorReplacement colorReplacement) {
+int replaceColor(StackNodePtr *topPtr, ColorReplacement colorReplacement) {
     StackNodePtr currentPtr = *topPtr;
-    unsigned numCorrectcolors = 0;
+    if (!currentPtr) return 0;
 
-    while (currentPtr != NULL) {
-        if (numCorrectcolors < 2) {
-            char colorCheck1 = colorReplacement.colorCheck1;
-            char colorCheck2 = colorReplacement.colorCheck2;
+    StackNodePtr nextPtr = currentPtr->nextPtr;
+    if (!nextPtr) return 0;
 
-            if ((currentPtr->color == colorCheck1) || (currentPtr->color == colorCheck2)) {
-                numCorrectcolors++;
-            }
-            currentPtr = currentPtr->nextPtr;
-        } else {
-            pop(topPtr);
-            pop(topPtr);
-            push(topPtr, colorReplacement.colorReplace);
-            currentPtr = NULL;
-        }
+    char color1 = colorReplacement.color1;
+    char color2 = colorReplacement.color2;
+    int found_pattern = 0;
+
+    // testar nas duas ordens (permutacoes)
+    if ((currentPtr->color == color1) && (nextPtr->color == color2)) {
+        found_pattern = 1;
     }
+    if ((currentPtr->color == color2) && (nextPtr->color == color1)) {
+        found_pattern = 1;
+    }
+
+    if (found_pattern) {
+        pop(topPtr);
+        pop(topPtr);
+        push(topPtr, colorReplacement.colorReplace);
+    }
+
+    return found_pattern;
+}
+
+
+int get_size_stack(StackNodePtr *top_ptr) {
+    StackNodePtr current_ptr = *top_ptr;
+    int size_stack = 0;
+
+    while (current_ptr) {
+        size_stack++;
+        current_ptr = current_ptr->nextPtr;
+    }
+
+    return size_stack;
 }
 
 
 // checa as configuracoes de cores dadas na stack,
 // se existirem sao removidas, se nao existirem,
-// nada acontece.
+// nada acontece. substitui apenas um padrao
+// (tripla ou dupla) por chamada.
 void checkColorsReplacement(StackNodePtr *topPtr) {
-    // garante que as cores sao alteradas apenas uma vez
-    int replaced = 0;
-
     // testa se ha tripla de qualquer cor no topo da stack
-    for (char testColor = RED; testColor <= YELLOW; testColor++)
-    {
-        if (replaced) break;
+    int size_stack = get_size_stack(topPtr);
 
-        int status_tripla = popTripleColor(topPtr, testColor);
-        if (status_tripla) replaced = 1;
-    }
+    for (size_t j = 0; j < size_stack; ++j) {
+        for (size_t i = 0; i < 6; i++)
+        {
+            int status_tripla = popTripleColor(topPtr, COLORS[i]);
+        }
 
-    if (!replaced) {
-        ColorReplacement colorReplacement1 = { GREEN, BLUE, CYAN };
-        ColorReplacement colorReplacement2 = { RED, BLUE, MAGENTA };
-        ColorReplacement colorReplacement3 = { RED, GREEN, YELLOW };
-
-        replaceColor(topPtr, colorReplacement1);
-        replaceColor(topPtr, colorReplacement2);
-        replaceColor(topPtr, colorReplacement3);
+        replaceColor(topPtr, (ColorReplacement) { 'g', 'b', 'c' });
+        replaceColor(topPtr, (ColorReplacement) { 'r', 'b', 'm' });
+        replaceColor(topPtr, (ColorReplacement) { 'r', 'g', 'y' });
     }
 }
 
